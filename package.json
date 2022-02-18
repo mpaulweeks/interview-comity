@@ -1,0 +1,25 @@
+{
+  "name": "interview-comity",
+  "version": "1.0.0",
+  "description": "Feb 2022",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rm -rf dist && tsc",
+    "prestart": "npm run build",
+    "start": "node dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mpaulweeks/interview-comity.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mpaulweeks/interview-comity/issues"
+  },
+  "homepage": "https://github.com/mpaulweeks/interview-comity#readme",
+  "devDependencies": {
+    "@types/node": "^17.0.18",
+    "typescript": "^4.5.5"
+  }
+}
