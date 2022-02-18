@@ -2,6 +2,7 @@ import { CovenantSummary } from "./convenant";
 import { Facility } from "./facility";
 import { Store } from "./store";
 import { AssignerSummary } from "./types";
+import { mapReduce } from "./util";
 
 type CovenantLookup = Map<number, CovenantSummary>;
 
@@ -13,10 +14,7 @@ export class Repository {
     const facilitiyDtos = await this.store.loadFacilities();
     const covenantDtos = await this.store.loadCovenants();
 
-    const bankNameById = bankDtos.reduce((map, elm) => {
-      map.set(elm.bankId, elm.name);
-      return map;
-    }, new Map<number, string>());
+    const bankNameById = mapReduce(bankDtos, b => b.bankId);
     const bankCovenants: CovenantLookup = new Map();
     const facilityCovenants: CovenantLookup = new Map();
     covenantDtos.forEach(cov => {
@@ -37,7 +35,7 @@ export class Repository {
     const facilities = facilitiyDtos.map(f => new Facility({
       facilityId: f.facilityId,
       bankId: f.bankId,
-      bankName: bankNameById.get(f.bankId),
+      bankName: bankNameById.get(f.bankId)?.name ?? 'Unknown', // if bank is missing, should we error?
       interestRate: f.interestRate,
       amount: f.amount,
       covenants: new CovenantSummary()
