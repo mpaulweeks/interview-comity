@@ -25,6 +25,17 @@ interface LoanRow {
   default_likelihood: string;
   state: string;
 }
+
+export interface AssignmentRow {
+  loan_id: number;
+  facility_id: number;
+}
+
+export interface YieldRow {
+  facility_id: number;
+  expected_yield: number;
+}
+
 export interface StreamCallback {
   (loan: LoanDto): void;
 }

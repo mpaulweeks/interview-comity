@@ -22,12 +22,15 @@ export interface LoanDto {
   state: string;
 }
 
-// export interface AssignmentDto {
-//   loan_id: number;
-//   facility_id: number;
-// }
-
-// export interface YieldDto {
-//   facility_id: number;
-//   expected_yield: number;
-// }
+export interface AssignmentDto {
+  loanId: number;
+  facilityId: number;
+}
+export interface YieldDto {
+  facilityId: number;
+  expectedYield: number;
+}
+export interface AssignerSummary {
+  assignments: AssignmentDto[];
+  yields: YieldDto[];
+}

@@ -1,6 +1,7 @@
 import { CovenantSummary } from "./convenant";
 import { Facility } from "./facility";
 import { Store } from "./store";
+import { AssignerSummary } from "./types";
 
 type CovenantLookup = Map<number, CovenantSummary>;
 
@@ -46,5 +47,9 @@ export class Repository {
     }));
 
     return facilities;
+  }
+
+  async recordAssignments(summary: AssignerSummary): Promise<void> {
+    console.log(summary);
   }
 }
