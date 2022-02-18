@@ -99,7 +99,7 @@ export class Store {
         reject(err);
       });
       stream.on('end', () => {
-        resolve();
+        parser.end();
       });
     });
     parser.on('readable', () => {
