@@ -1,4 +1,11 @@
 
+export function mapReduce<K, V>(arr: V[], keyFunc: ((elm: V) => K)) {
+  return arr.reduce((obj, elm: V) => {
+    obj.set(keyFunc(elm), elm);
+    return obj;
+  }, new Map<K, V>());
+}
+
 export function sum(arr: number[]): number {
   return arr.reduce((sum, elm) => sum + elm, 0);
 }
@@ -9,8 +16,9 @@ function compare(a: string | number, b: string | number) {
   return 0;
 }
 
-function sortArrayInPlace<T>(arr: T[], cbs: ((obj: T) => string | number)[]): void {
-  arr.sort((a, b) => {
+export function sortArrayOfObjects<T>(arr: T[], cbs: ((obj: T) => string | number)[]): T[] {
+  const sorted = arr.concat();
+  sorted.sort((a, b) => {
     let order = 0;
     for (const toCompare of cbs) {
       order = compare(toCompare(a), toCompare(b));
@@ -19,10 +27,5 @@ function sortArrayInPlace<T>(arr: T[], cbs: ((obj: T) => string | number)[]): vo
     }
     return order;
   });
-}
-
-export function sortArrayOfObjects<T>(arr: T[], cbs: ((obj: T) => string | number)[]): T[] {
-  const sorted = arr.concat();
-  sortArrayInPlace(sorted, cbs);
   return sorted;
 }

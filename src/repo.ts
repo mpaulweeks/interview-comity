@@ -12,7 +12,6 @@ export class Repository {
     const bankDtos = await this.store.loadBanks();
     const facilitiyDtos = await this.store.loadFacilities();
     const covenantDtos = await this.store.loadCovenants();
-    // console.log(bankDtos, facilitiyDtos, covenantDtos);
 
     const bankNameById = bankDtos.reduce((map, elm) => {
       map.set(elm.bankId, elm.name);

@@ -24,7 +24,7 @@ export interface LoanDto {
 
 export interface AssignmentDto {
   loanId: number;
-  facilityId: number;
+  facilityId?: number;
 }
 export interface YieldDto {
   facilityId: number;
