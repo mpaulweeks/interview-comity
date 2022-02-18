@@ -3,7 +3,9 @@ import { Repository } from "./repo";
 import { Store } from "./store";
 
 (async () => {
-  const store = new Store('data/small');
+  const path = process.argv[2] ?? 'data/small';
+  console.log(`Using the csv files in ${path}`);
+  const store = new Store(path);
   const repo = new Repository(store);
   const facilities = await repo.loadBankData();
   const assigner = new Assigner(facilities);
