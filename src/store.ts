@@ -1,29 +1,32 @@
 import { parse } from 'csv-parse';
 import fs from 'fs';
-import { BankDto, ConvenantDto, FacilityDto } from './types';
+import { BankDto, ConvenantDto, FacilityDto, LoanDto } from './types';
 
-export interface FacilityRow {
+interface FacilityRow {
   id: string;
   bank_id: string;
   interest_rate: string;
   amount: string;
 }
-export interface BankRow {
+interface BankRow {
   id: string;
   name: string;
 }
-export interface ConvenantRow {
+interface ConvenantRow {
   bank_id: string;
   facility_id?: string;
   max_default_likelihood?: string;
   banned_state?: string;
 }
-export interface LoanRow {
+interface LoanRow {
   id: string;
   amount: string;
   interest_rate: string;
   default_likelihood: string;
   state: string;
+}
+export interface StreamCallback {
+  (loan: LoanDto): void;
 }
 
 export class Store {
@@ -64,5 +67,46 @@ export class Store {
       maxDefaultLikelihood: r.max_default_likelihood.length > 0 ? Number(r.max_default_likelihood) : undefined,
       bannedState: r.banned_state.length > 0 ? r.banned_state : undefined,
     }));
+  }
+
+  streamLoans(cb: StreamCallback) {
+    const parser = parse({
+      columns: true,
+      delimiter: ','
+    });
+    const stream = fs.createReadStream(`${this.domainPath}/loans.csv`);
+    const promise = new Promise<void>((resolve, reject) => {
+      parser.on('error', (err) => {
+        console.error(err.message);
+        reject(err);
+      });
+      parser.on('end', () => {
+        resolve();
+      });
+      stream.on('error', (err) => {
+        console.error(err.message);
+        reject(err);
+      });
+      stream.on('end', () => {
+        resolve();
+      });
+    });
+    parser.on('readable', () => {
+      let row: LoanRow;
+      while ((row = parser.read()) !== null) {
+        const dto: LoanDto = {
+          loanId: Number(row.id),
+          amount: Number(row.amount),
+          interestRate: Number(row.interest_rate),
+          defaultLikelihood: Number(row.default_likelihood),
+          state: row.state,
+        };
+        cb(dto);
+      }
+    });
+    stream.on('data', chunk => {
+      parser.write(chunk);
+    });
+    return promise;
   }
 }

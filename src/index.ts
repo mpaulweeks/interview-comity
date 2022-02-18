@@ -8,4 +8,6 @@ console.log("Hello world");
   const store = new Store('data/small');
   const repo = new Repository(store);
   await repo.loadBankData();
+
+  await store.streamLoans(console.log);
 })();
