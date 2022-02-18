@@ -1,6 +1,7 @@
 import { parse } from 'csv-parse';
+import { stringify } from 'csv/sync';
 import fs from 'fs';
-import { BankDto, ConvenantDto, FacilityDto, LoanDto } from './types';
+import { AssignmentDto, BankDto, ConvenantDto, FacilityDto, LoanDto, YieldDto } from './types';
 
 interface FacilityRow {
   id: string;
@@ -14,9 +15,9 @@ interface BankRow {
 }
 interface ConvenantRow {
   bank_id: string;
-  facility_id?: string;
-  max_default_likelihood?: string;
-  banned_state?: string;
+  facility_id: string;
+  max_default_likelihood: string;
+  banned_state: string;
 }
 interface LoanRow {
   id: string;
@@ -27,13 +28,13 @@ interface LoanRow {
 }
 
 export interface AssignmentRow {
-  loan_id: number;
-  facility_id: number;
+  loan_id: string;
+  facility_id: string;
 }
 
 export interface YieldRow {
-  facility_id: number;
-  expected_yield: number;
+  facility_id: string;
+  expected_yield: string;
 }
 
 export interface StreamCallback {
@@ -78,6 +79,35 @@ export class Store {
       maxDefaultLikelihood: r.max_default_likelihood.length > 0 ? Number(r.max_default_likelihood) : undefined,
       bannedState: r.banned_state.length > 0 ? r.banned_state : undefined,
     }));
+  }
+
+  async writeAssignments(dtos: AssignmentDto[]): Promise<void> {
+    const rows: AssignmentRow[] = dtos.map(dto => ({
+      loan_id: dto.loanId.toString(),
+      facility_id: dto.facilityId?.toString() ?? '',
+    }));
+    const string = stringify(rows, {
+      header: true,
+      columns: {
+        loan_id: 'loan_id',
+        facility_id: 'facility_id',
+      },
+    });
+    await fs.promises.writeFile('out/assignments.csv', string);
+  }
+  async writeYields(dtos: YieldDto[]): Promise<void> {
+    const rows: YieldRow[] = dtos.map(dto => ({
+      facility_id: dto.facilityId.toString(),
+      expected_yield: dto.expectedYield.toString(),
+    }));
+    const string = stringify(rows, {
+      header: true,
+      columns: {
+        facility_id: 'facility_id',
+        expected_yield: 'expected_yield',
+      },
+    });
+    await fs.promises.writeFile('out/yields.csv', string);
   }
 
   streamLoans(cb: StreamCallback) {

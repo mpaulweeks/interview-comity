@@ -47,6 +47,7 @@ export class Repository {
   }
 
   async recordAssignments(summary: AssignerSummary): Promise<void> {
-    console.log(summary);
+    await this.store.writeAssignments(summary.assignments);
+    await this.store.writeYields(summary.yields);
   }
 }
