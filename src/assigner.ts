@@ -6,7 +6,11 @@ import { sortArrayOfObjects } from "./util";
 export class Assigner {
   private readonly sortedFacilities: Facility[];
   constructor(facilities: Facility[]) {
-    this.sortedFacilities = sortArrayOfObjects(facilities, f => f.interestRate);
+    this.sortedFacilities = sortArrayOfObjects(facilities, [
+      f => f.interestRate,
+      f => f.facilityId, // tie breaker for consistent sorting
+    ]);
+    console.log(this.sortedFacilities);
   }
 
   get summary(): AssignerSummary {
